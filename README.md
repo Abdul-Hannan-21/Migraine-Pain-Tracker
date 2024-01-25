@@ -1,6 +1,6 @@
 # Migraine Pain Tracker
 
-![Migraine Pain Tracker](migraine_pain_tracker.png)
+![Migraine Pain Tracker]
 
 ---
 
