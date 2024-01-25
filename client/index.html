@@ -3,250 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Tracker</title>
-    <link rel="stylesheet" href="/client/style.css">
+    <title>Pain Tracker</title>
+
+    <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="../client/script.js"></script>
+
     <style>
-        /* Add this style to make the page scrollable */
+        
         body {
-            overflow-y: scroll;
-        }
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
 
-        /* Add padding to the content elements to exceed viewport height */
-        .content {
-            padding: 20px;
-        }
+nav {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+}
 
-        /* Adjust chart container size to fit both charts */
-        #chart {
-            display: flex;
-            justify-content: space-around;
-        }
+.navbar {
+    display: flex;
+    justify-content: center;
+}
 
-        /* Adjust the size of each chart */
-        .chart {
-            width: 45%;
-            height: 400px;
-        }
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 10px;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+.navbar a:hover {
+    background-color: #0056b3;
+}
+
+header {
+    background-color: #fff;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.content {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px auto;
+    text-align: center;
+    max-width: 800px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input, select, button {
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.charts {
+    text-align: center;
+}
+
+.chart {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 800px;
+}
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: auto;
+    height: auto;
+    padding: 5px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+}
+
     </style>
 </head>
 <body>
-    <h1>Basic Expense Tracker</h1>
+    <nav>
+        <div class="navbar">
+            <a href="#line-chart">Line Chart</a>
+            <a href="#bar-chart">Bar Chart</a>
+            <a href="#pain-summary">Pain Summary</a>
+        </div>
+    </nav>
+
+    <header>
+        <h1>Migraine Pain Tracker</h1>
+        <div class="content">
+            <p>
+                Welcome to Migraine Pain Tracker. Our goal is to help you track your pain over time, providing valuable insights through our line chart and bar chart. The bar chart displays the average pain level, and line chart making it easy to monitor fluctuations. By using this, you can track changes in pain intensity over time and get a useful insights to discuss with your Doctor.
+            </p>
+        </div>
+    </header>
     
-    <!-- Expense Input Form -->
+    
+    <!-- Pain Input Form -->
     <div class="content">
-        <h2>Add Expense</h2>
-        <form id="expense-form">
-            <input type="text" id="description" placeholder="Description" required>
-            <input type="number" id="amount" placeholder="Amount" required>
-            <button type="submit">Add Expense</button>
+        <h2>Add Pain</h2>
+        <form id="pain-form">
+            <label for="pain-level">Pain Level:</label>
+            <span id="pain-level-value">1</span> <!-- Display selected value here -->
+            <input type="range" id="pain-level" min="1" max="10" value="1" step="1" required>
+            
+            <label for="disease">Disease:</label>
+            <select id="disease" required>
+                <option value="Chronic Migraine">Chronic Migraine</option>
+            </select>
+            <label for="date">Date:</label>
+            <input type="date" id="date" required>
+            <button type="submit">Add Pain</button>
         </form>
     </div>
 
-    <!-- Display Expenses -->
-    <div class="content">
-        <h2>Expenses</h2>
-        <ul id="expense-list">
-            <!-- Expenses will be listed here -->
-        </ul>
+    <!-- D3.js Visualization -->
+    <div class="charts" id="line-chart-section">
+        <h2 id="line-chart">Line Chart</h2>
+        <div class="chart">Line Chart</div>
+    </div>
+    <div class="charts" id="bar-chart-section">
+        <h2 id="bar-chart">Bar Chart</h2>
+        <div class="chart">Bar Chart</div>
     </div>
 
-    <!-- D3.js Visualization (Placeholder) -->
-    <div id="chart">
-        <div class="chart" id="pie-chart"></div>
-        <div class="chart" id="bar-chart"></div>
+    <!-- Display Pain summary -->
+    <div class="content">
+        <h2 id="pain-summary">Your Pain Summary</h2>
+        <table id="pain-table">
+            <thead>
+                <tr>
+                    <th>Pain Level</th>
+                    <th>Disease</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="pain-list">
+                <!-- Pain levels will be listed here -->
+            </tbody>
+        </table>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const serverURL = window.location.origin; 
-            const expenseForm = document.getElementById('expense-form');
-            const descriptionInput = document.getElementById('description');
-            const amountInput = document.getElementById('amount');
-            const expenseList = document.getElementById('expense-list');
-            const pieChartContainer = document.getElementById('pie-chart');
-            const barChartContainer = document.getElementById('bar-chart');
-        
-            // Fetch expenses when the page loads
-            fetchExpenses();
-        
-            expenseForm.addEventListener('submit', (event) => {
-                event.preventDefault();
-                const description = descriptionInput.value;
-                const amount = amountInput.value;
-        
-                if (description && amount) {
-                    addExpense({ description, amount });
-                    descriptionInput.value = ''; // Clear description input
-                    amountInput.value = ''; // Clear amount input
-                } else {
-                    alert('Please fill in all fields');
-                }
-            });
-        
-            function addExpenseToList(description, amount) {
-                const listItem = document.createElement('li');
-                listItem.textContent = `${description}: $${amount}`;
-                expenseList.appendChild(listItem);
-            }
-        
-            function addExpense(expense) {
-                fetch(`${serverURL}/add-expense`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(expense),
-    })
-                .then(response => response.json())
-                .then(data => {
-                    addExpenseToList(data.description, data.amount);
-                    fetchExpenses(); // Fetch updated expenses and update the charts
-                })
-                .catch(error => console.error('Error:', error));
-            }
-        
-            function fetchExpenses() {
-                fetch(`${serverURL}/expenses`, {
-        method: 'GET',
-    })
-                    .then(response => response.json())
-                    .then(data => {
-                        // Clear the list and render the updated expenses
-                        expenseList.innerHTML = '';
-                        data.forEach(expense => addExpenseToList(expense.description, expense.amount));
-                        renderCharts(data); // Call the renderCharts function with expenses data
-                    })
-                    .catch(error => console.error('Error:', error));
-            }
-        
-            // Function to render the D3.js bar chart
-            function renderBarChart(expenses) {
-                // Clear the existing bar chart
-                barChartContainer.innerHTML = '';
+        const painLevel = document.getElementById('pain-level');
+        const painLevelValue = document.getElementById('pain-level-value');
 
-                const chartWidth = 400;
-                const chartHeight = 400;
-                const margin = { top: 20, right: 20, bottom: 40, left: 40 };
-
-                const width = chartWidth - margin.left - margin.right;
-                const height = chartHeight - margin.top - margin.bottom;
-
-                const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
-
-                const barSvg = d3.select('#bar-chart')
-                    .append('svg')
-                    .attr('width', chartWidth)
-                    .attr('height', chartHeight);
-
-                const barGroup = barSvg.append('g')
-                    .attr('transform', `translate(${margin.left},${margin.top})`);
-
-                const x = d3.scaleBand()
-                    .domain(expenses.map(d => d.description))
-                    .range([0, width])
-                    .padding(0.1);
-
-                const y = d3.scaleLinear()
-                    .domain([0, d3.max(expenses, d => d.amount)])
-                    .nice()
-                    .range([height, 0]);
-
-                barGroup.selectAll('.bar')
-                    .data(expenses)
-                    .enter().append('rect')
-                    .attr('class', 'bar')
-                    .attr('x', d => x(d.description))
-                    .attr('width', x.bandwidth())
-                    .attr('y', d => y(d.amount))
-                    .attr('height', d => height - y(d.amount))
-                    .attr('fill', (d, i) => colorScale(i));
-
-                barGroup.append('g')
-                    .attr('class', 'x-axis')
-                    .attr('transform', `translate(0,${height})`)
-                    .call(d3.axisBottom(x))
-                    .selectAll('text')
-                    .style('text-anchor', 'middle');
-
-                barGroup.append('g')
-                    .attr('class', 'y-axis')
-                    .call(d3.axisLeft(y).ticks(5));
-
-                barGroup.append('text')
-                    .attr('x', width / 2)
-                    .attr('y', height + margin.bottom - 5)
-                    .attr('text-anchor', 'middle')
-                    .text('Expense Description');
-
-                barGroup.append('text')
-                    .attr('transform', 'rotate(-90)')
-                    .attr('x', -height / 2)
-                    .attr('y', -margin.left)
-                    .attr('dy', '1em')
-                    .style('text-anchor', 'middle')
-                    .text('Amount ($)');
-            }
-
-            // Function to render the D3.js pie chart
-            // Function to render the D3.js pie chart
-// Function to render the D3.js pie chart
-function renderPieChart(expenses) {
-    // Clear the existing pie chart
-    pieChartContainer.innerHTML = '';
-
-    const chartWidth = 400;
-    const chartHeight = 400;
-
-    // Calculate the center position for the pie chart
-    const pieX = chartWidth / 2;
-    const pieY = chartHeight / 2;
-
-    // Create an SVG element for the pie chart
-    const pieSvg = d3.select('#pie-chart')
-        .append('svg')
-        .attr('width', chartWidth)
-        .attr('height', chartHeight);
-
-    // Create an arc generator for the pie chart
-    const arc = d3.arc()
-        .innerRadius(0)
-        .outerRadius(Math.min(chartWidth, chartHeight) / 2);
-
-    // Create a pie layout
-    const pie = d3.pie()
-        .value(d => d.amount)
-        .sort(null);
-
-    // Define a color scale for the pie chart slices
-    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
-
-    // Translate the SVG element to the center position
-    const pieGroup = pieSvg.append('g')
-        .attr('transform', `translate(${pieX},${pieY})`);
-
-    // Create arcs for the pie chart
-    const arcs = pieGroup.selectAll('.arc')
-        .data(pie(expenses))
-        .enter().append('g')
-        .attr('class', 'arc');
-
-    // Add slices to the pie chart with color assignment
-    arcs.append('path')
-        .attr('d', arc)
-        .attr('fill', (d, i) => colorScale(i)); // Assign different colors based on index
-
-    // Add labels to the pie chart
-    arcs.append('text')
-        .attr('transform', d => `translate(${arc.centroid(d)})`)
-        .attr('dy', '0.35em')
-        .text(d => d.data.description);
-}
-
-            function renderCharts(expenses) {
-                renderBarChart(expenses);
-                renderPieChart(expenses);
-            }
+        // Update the value displayed next to the slider when it's moved
+        painLevel.addEventListener('input', function() {
+            painLevelValue.textContent = this.value;
         });
     </script>
 </body>
