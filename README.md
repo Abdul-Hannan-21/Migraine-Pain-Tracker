@@ -1,8 +1,5 @@
 # Migraine Pain Tracker
 
-![Migraine Pain Tracker]
-
----
 
 ## Description
 
