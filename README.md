@@ -64,6 +64,9 @@ The response is a JSON object with a single key-value pair:
         }
     ]
 }
+
+
+
 - **D3.js Usage:** D3.js is exclusively used for creating interactive data visualizations, meeting the requirement to use this framework.
 - **GitHub Codespaces Integration:** The application is configured to run in GitHub Codespaces, providing a clickable development version accessible via a single command.
 
