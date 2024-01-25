@@ -52,7 +52,7 @@ The response is a JSON object with a single key-value pair:
 
 ### Example Response
 
-```json
+json
 {
     "painData": [
         {
@@ -68,7 +68,7 @@ The response is a JSON object with a single key-value pair:
     ]
 }
 
----
+
 
 ### Usage GitHub Codespaces
 
