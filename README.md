@@ -25,7 +25,10 @@ Migraine Pain Tracker is a web application designed to assist users in tracking 
 
 - **Two-Tier Web App:** Implemented with a Flask backend serving as the API and a frontend built using HTML, CSS, and JavaScript.
 - **Data Exchange Format:** Pain records are stored and retrieved in JSON format, allowing for standardized data exchange.
-- This API serves as a backend for the Pain Tracker application, allowing users to retrieve pain data stored in the system. The pain data includes information such as the date of the pain entry, the associated disease, and the reported pain level.
+- **D3.js Usage:** D3.js is exclusively used for creating interactive data visualizations, meeting the requirement to use this framework.
+- **GitHub Codespaces Integration:** The application is configured to run in GitHub Codespaces, providing a clickable development version accessible via a single command.
+
+---
 
 ## API Endpoint: `/api/get-pain-data`
 
@@ -65,11 +68,6 @@ The response is a JSON object with a single key-value pair:
     ]
 }
 
-
-
-- **D3.js Usage:** D3.js is exclusively used for creating interactive data visualizations, meeting the requirement to use this framework.
-- **GitHub Codespaces Integration:** The application is configured to run in GitHub Codespaces, providing a clickable development version accessible via a single command.
-
 ---
 
 ### Usage GitHub Codespaces
@@ -80,9 +78,9 @@ The response is a JSON object with a single key-value pair:
 4. Once the environment is ready, run the Flask app using: `python app.py`.
 5. Access the application in your browser at the provided URL.
 
-**Note:** Ensure that you have Python and lask  installed for both local and GitHub Codespaces development.
+**Note:** Ensure that you have Python and Flask installed for both local and GitHub Codespaces development.
 
-
+---
 
 Feel free to reach out with any questions or feedback!
 
