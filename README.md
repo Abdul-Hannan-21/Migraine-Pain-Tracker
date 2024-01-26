@@ -75,7 +75,7 @@ json
 4. Once the environment is ready, run the Flask app using: `python app.py`.
 5. Access the application in your browser at the provided URL.
 
-**Note:** Ensure that you have Python and Flask installed for both local and GitHub Codespaces development.
+**Note:** Ensure that you have Python ,Flask and Flask-CORS installed for both local and GitHub Codespaces development.
 
 ---
 
